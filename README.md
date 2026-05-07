@@ -36,8 +36,8 @@ Browser C ──WebSocket──┘         │
 1. Go to [supabase.com](https://supabase.com) → **New Project**
 2. Open **SQL Editor** → paste the contents of `schema.sql` → **Run**
 3. Go to **Project Settings → API** and copy:
-   - `Project URL`
-   - `anon public` key
+   - `Project URL` = SUPABASE_URL=https://lgkymrucwvqlsguicxvc.supabase.co
+   - `anon public` key = SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxna3ltcnVjd3ZxbHNndWljeHZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNTMwMTYsImV4cCI6MjA5MzYyOTAxNn0.sFa1YW5NOo_lTjPnQWDKHe1QhX6f6_QEJ_r9Dhh0dwE
 
 ### 2. Configure Environment
 
