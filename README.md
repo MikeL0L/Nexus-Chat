@@ -37,9 +37,9 @@ Browser C ──WebSocket──┘         │
 2. Open **SQL Editor** → paste the contents of `schema.sql` → **Run**
 3. Go to **Project Settings → API** and copy:
    - `Project URL`
-   - = SUPABASE_URL=https://lgkymrucwvqlsguicxvc.supabase.co
+   - SUPABASE_URL=https://lgkymrucwvqlsguicxvc.supabase.co
    - `anon public` key
-   - = SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxna3ltcnVjd3ZxbHNndWljeHZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNTMwMTYsImV4cCI6MjA5MzYyOTAxNn0.sFa1YW5NOo_lTjPnQWDKHe1QhX6f6_QEJ_r9Dhh0dwE
+   - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxna3ltcnVjd3ZxbHNndWljeHZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNTMwMTYsImV4cCI6MjA5MzYyOTAxNn0.sFa1YW5NOo_lTjPnQWDKHe1QhX6f6_QEJ_r9Dhh0dwE
 
 Note: f you have git cloned this, you must create an `.env` file in VS Code and copy/paste the `Project URL` and `anon public` key. This is because We cannot upload an `.env` file in Github. without this, the web will not run
 
