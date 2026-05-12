@@ -119,6 +119,7 @@ The `main.py` entrypoint supports `PORT` and defaults to `8000` if not set.
 ├── main.py          # FastAPI app — WebSocket server, ConnectionManager, background worker
 ├── database.py      # Supabase client — all DB read/write operations
 ├── requirements.txt
+├── env.example      # supabase configuration for Project URL and anon key
 ├── schema.sql       # Use in Supabase SQL Editor to create tables
 ├── static/
 │   └── index.html   # Frontend WebSocket client UI
