@@ -69,7 +69,7 @@
   #status-dot.live     { background: var(--green); box-shadow: 0 0 5px var(--green); }
   #status-dot.syncing  { background: var(--yellow); }
   #status-dot.error    { background: var(--red); }
-  #status-text { font-size: 10px; color: var(--text); }
+  #status-text { font-size: 10px; }
 
   /* stats grid */
   #stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 0; font-size: 9px; color: var(--muted); }
@@ -95,6 +95,7 @@
 
   #you-section { padding: 12px 16px; border-top: 1px solid var(--border); }
   #you-name { font-size: 10px; font-weight: 600; margin-top: 5px; }
+  #you-id   { font-size: 8px; color: var(--border2); margin-top: 3px; }
 
   /* ── Main chat ── */
   #main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
@@ -114,7 +115,7 @@
     font-size: 8px; color: var(--border2); padding: 2px 7px;
     border: 1px solid var(--border2); border-radius: 4px; letter-spacing: 1px;
   }
-  #online-count { font-size: 9px; color: var(--text); }
+  #online-count { font-size: 9px; color: var(--muted); }
 
   /* messages */
   #messages {
@@ -208,13 +209,15 @@
       <span id="status-text" style="font-size:10px; color:var(--sub)">connecting...</span>
     </div>
     <div id="stats-grid">
+      <div>events <span id="st-events">0</span></div>
       <div>latency <span class="blue" id="st-lat">—</span></div>
       <div>messages <span class="purp" id="st-msgs">0</span></div>
+      <div>conc-ops <span class="orng" id="st-conc">0</span></div>
     </div>
   </div>
 
   <div class="sidebar-section">
-    <div class="label">EVENT LOG</div>
+    <div class="label">WS EVENT LOG</div>
     <div id="ws-log"><div style="color:var(--border2); font-size:9px">waiting...</div></div>
   </div>
 
@@ -229,6 +232,7 @@
       <div class="user-dot" id="you-dot"></div>
       <div id="you-name"></div>
     </div>
+    <div id="you-id"></div>
   </div>
 </aside>
 
@@ -237,6 +241,7 @@
   <div id="header">
     <div id="header-left">
       <span id="channel"># general</span>
+      <span class="badge">WEBSOCKET · ASYNC · SUPABASE</span>
     </div>
     <span id="online-count" style="font-size:9px; color:var(--muted)">0 online</span>
   </div>
@@ -253,6 +258,9 @@
       <span id="input-prefix" style="color:var(--sub)">› </span>
       <input id="input-field" type="text" placeholder="type a message and press Enter..." autocomplete="off" />
       <button id="send-btn" disabled>SEND</button>
+    </div>
+    <div id="input-footer">
+      WebSocket full-duplex · asyncio.gather() parallel ops · background worker · Supabase PostgreSQL
     </div>
   </div>
 </div>
@@ -298,6 +306,7 @@ document.getElementById("you-name").textContent = ME.name;
 document.getElementById("you-name").style.color = ME.color;
 document.getElementById("you-dot").style.background = ME.color;
 document.getElementById("you-dot").style.boxShadow = `0 0 5px ${ME.color}`;
+document.getElementById("you-id").textContent = "id: " + ME.id;
 document.getElementById("input-prefix").style.color = ME.color;
 document.getElementById("input-prefix").textContent = ME.name + " ›";
 
@@ -333,6 +342,7 @@ function appendMessage(msg, scroll=true) {
   const empty = document.getElementById("empty-state");
   if (empty) empty.remove();
 
+  const isMe = msg.uid === ME.id;
   const row = document.createElement("div");
   row.className = "msg-row" + (isMe ? " mine" : "");
   if (isMe) row.style.borderLeftColor = ME.color + "44";
@@ -483,6 +493,7 @@ function sendMessage() {
 
   const msg = {
     id:    Date.now() + "_" + Math.random().toString(36).slice(2,5),
+    uid:   ME.id,
     name:  ME.name,
     color: ME.color,
     text,
