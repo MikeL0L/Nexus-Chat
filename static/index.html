@@ -209,15 +209,13 @@
       <span id="status-text" style="font-size:10px; color:var(--sub)">connecting...</span>
     </div>
     <div id="stats-grid">
-      <div>events <span id="st-events">0</span></div>
       <div>latency <span class="blue" id="st-lat">—</span></div>
       <div>messages <span class="purp" id="st-msgs">0</span></div>
-      <div>conc-ops <span class="orng" id="st-conc">0</span></div>
     </div>
   </div>
 
   <div class="sidebar-section">
-    <div class="label">WS EVENT LOG</div>
+    <div class="label">EVENT LOG</div>
     <div id="ws-log"><div style="color:var(--border2); font-size:9px">waiting...</div></div>
   </div>
 
@@ -241,7 +239,6 @@
   <div id="header">
     <div id="header-left">
       <span id="channel"># general</span>
-      <span class="badge">WEBSOCKET · ASYNC · SUPABASE</span>
     </div>
     <span id="online-count" style="font-size:9px; color:var(--muted)">0 online</span>
   </div>
@@ -258,9 +255,6 @@
       <span id="input-prefix" style="color:var(--sub)">› </span>
       <input id="input-field" type="text" placeholder="type a message and press Enter..." autocomplete="off" />
       <button id="send-btn" disabled>SEND</button>
-    </div>
-    <div id="input-footer">
-      WebSocket full-duplex · asyncio.gather() parallel ops · background worker · Supabase PostgreSQL
     </div>
   </div>
 </div>
