@@ -1,5 +1,5 @@
 # Nexus Chat — Real-Time Multi-User Chat
-# By Cassion Group - (Cassion, Soriano, Camariosa, Pabellan, Cabot) - CS3C
+## By Cassion Group - (Cassion, Soriano, Camariosa, Pabellan, Cabot) - CS3C
 
 A real-time live chat system built with **Python (FastAPI)** and **Supabase**, demonstrating core parallel/distributed systems concepts.
 
