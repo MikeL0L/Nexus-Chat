@@ -1,7 +1,18 @@
 # Nexus Chat — Real-Time Multi-User Chat
+# By Cassion Group - (Cassion, Soriano, Camariosa, Pabellan, Cabot) - CS3C
 
-A real-time live chat system built with **Python (FastAPI)** and **Supabase**,
-demonstrating core parallel/distributed systems concepts.
+A real-time live chat system built with **Python (FastAPI)** and **Supabase**, demonstrating core parallel/distributed systems concepts.
+
+---
+
+## Overview
+
+This project is a FastAPI WebSocket chat server that uses Supabase as a shared PostgreSQL backend. It supports:
+
+- real-time WebSocket messaging
+- online presence tracking
+- background cleanup for stale presence rows
+- local development and Render deployment
 
 ---
 
@@ -11,25 +22,25 @@ demonstrating core parallel/distributed systems concepts.
 Browser A ──WebSocket──┐
 Browser B ──WebSocket──┤── FastAPI (asyncio) ──── Supabase PostgreSQL
 Browser C ──WebSocket──┘         │
-                          Background Worker
-                          (presence cleanup)
+                         Background Worker
+                         (presence cleanup)
 ```
 
-### Parallel / Distributed Concepts Demonstrated
+### Concepts Demonstrated
 
 | Concept | Implementation |
 |---|---|
-| Concurrent request handling | `asyncio` + FastAPI WebSocket server handles N clients simultaneously |
+| Concurrent request handling | `asyncio` + FastAPI WebSocket server handles multiple clients simultaneously |
 | Parallel I/O | `asyncio.gather()` fires DB save + broadcast at the same time |
 | Client-server communication | Full-duplex WebSocket (not polling) |
 | Background workers | `asyncio.create_task()` — presence cleanup runs every 10s independently |
 | Shared persistent state | Supabase PostgreSQL — all clients read/write the same DB |
 | Data consistency | Upsert for presence, append-only for messages |
-| Auto-reconnect | Exponential backoff on the frontend |
+| Deployment-ready | `PORT` support for Render / hosted servers |
 
 ---
 
-## Quick Start
+## Local Setup
 
 ### 1. Create a Supabase Project
 
@@ -37,51 +48,82 @@ Browser C ──WebSocket──┘         │
 2. Open **SQL Editor** → paste the contents of `schema.sql` → **Run**
 3. Go to **Project Settings → API** and copy:
    - `Project URL`
-   - SUPABASE_URL=https://lgkymrucwvqlsguicxvc.supabase.co
    - `anon public` key
-   - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxna3ltcnVjd3ZxbHNndWljeHZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwNTMwMTYsImV4cCI6MjA5MzYyOTAxNn0.sFa1YW5NOo_lTjPnQWDKHe1QhX6f6_QEJ_r9Dhh0dwE
-
-Note: f you have git cloned this, you must create an `.env` file in VS Code and copy/paste the `Project URL` and `anon public` key. This is because We cannot upload an `.env` file in Github. without this, the web will not run
 
 ### 2. Configure Environment
 
-```bash
-cp .env.example .env
-# Edit .env and fill in your SUPABASE_URL and SUPABASE_ANON_KEY
+Create a local `.env` file in the root folder with:
+
+```ini
+SUPABASE_URL=<your-supabase-url>
+SUPABASE_ANON_KEY=<your-supabase-anon-key>
 ```
+
+> `.env` is excluded from Git and should not be committed.
 
 ### 3. Install Dependencies
 
 ```bash
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+venv\Scripts\activate      # Windows
 pip install -r requirements.txt
 ```
 
-### 4. Run the Server
+### 4. Run Locally
 
 ```bash
 python main.py
 ```
 
-Server starts at `http://localhost:8000`
+Or with Uvicorn directly:
 
-Open two browser tabs to test multi-user real-time messaging.
+```bash
+uvicorn main:app --reload
+```
+
+The app starts on `http://localhost:8000` by default.
+
+---
+
+## Render Deployment
+
+This app is ready for Render deployment.
+
+### Build Command
+
+```bash
+pip install -r requirements.txt
+```
+
+### Start Command
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+### Environment Variables
+
+Set these in Render:
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+
+The `main.py` entrypoint supports `PORT` and defaults to `8000` if not set.
 
 ---
 
 ## Project Structure
 
 ```
-nexus-chat/
+./
 ├── main.py          # FastAPI app — WebSocket server, ConnectionManager, background worker
 ├── database.py      # Supabase client — all DB read/write operations
-├── schema.sql       # Run once in Supabase SQL Editor to create tables
-├── static/
-│   └── index.html   # Frontend — WebSocket client, dark terminal UI
 ├── requirements.txt
-├── .env.example
-└── README.md
+├── schema.sql       # Use in Supabase SQL Editor to create tables
+├── static/
+│   └── index.html   # Frontend WebSocket client UI
+├── README.md
+└── .gitignore
 ```
 
 ---
@@ -90,22 +132,19 @@ nexus-chat/
 
 ### Concurrent broadcast (main.py)
 ```python
-# All connected clients receive the message simultaneously
-await asyncio.gather(*[ws.send_json(payload) for uid, ws in targets])
+await asyncio.gather(*[_safe_send(uid, ws) for uid, ws in targets])
 ```
 
 ### Parallel DB + broadcast on message send (main.py)
 ```python
-# DB write and WebSocket broadcast happen at the same time
 await asyncio.gather(
-    asyncio.to_thread(db.save_message, msg),   # Supabase INSERT
+    asyncio.to_thread(db.save_message, msg),
     manager.broadcast({"event": "message", "message": msg}),
 )
 ```
 
 ### Background worker (main.py)
 ```python
-# Runs independently every 10s — cleans stale presence rows
 asyncio.create_task(presence_cleanup_worker())
 ```
 
@@ -117,7 +156,7 @@ asyncio.create_task(presence_cleanup_worker())
 |---|---|
 | `join` | `{event, user: {id, name, color}}` |
 | `message` | `{event, message: {id, uid, name, color, text, ts}}` |
-| `heartbeat` | `{event, user}` — sent every 5s to stay "online" |
+| `heartbeat` | `{event, user}` — sent every 5s to stay online |
 
 | Event (server → client) | Payload |
 |---|---|
