@@ -1,523 +1,728 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Nexus Chat</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  :root {
-    --bg:       #080b10;
-    --bg2:      #0d1117;
-    --border:   #161b22;
-    --border2:  #21262d;
-    --muted:    #30363d;
-    --sub:      #8b949e;
-    --text:     #e6edf3;
-    --green:    #3fb950;
-    --green-bg: #238636;
-    --blue:     #58a6ff;
-    --purple:   #bc8cff;
-    --orange:   #ffa657;
-    --yellow:   #d29922;
-    --red:      #f85149;
-    --font: 'JetBrains Mono', 'Cascadia Code', ui-monospace, monospace;
-  }
+    :root {
+      --bg: #080b10;
+      --bg2: #0d1117;
+      --border: #161b22;
+      --border2: #21262d;
+      --muted: #30363d;
+      --sub: #8b949e;
+      --text: #e6edf3;
+      --green: #3fb950;
+      --green-bg: #238636;
+      --blue: #58a6ff;
+      --purple: #bc8cff;
+      --orange: #ffa657;
+      --yellow: #d29922;
+      --red: #f85149;
+      --font: 'JetBrains Mono', 'Cascadia Code', ui-monospace, monospace;
+    }
 
-  html, body { height: 100%; overflow: hidden; }
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
 
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: #c9d1d9;
-    display: flex;
-    height: 100vh;
-  }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: #c9d1d9;
+      display: flex;
+      height: 100vh;
+    }
 
-  /* ── Sidebar ── */
-  #sidebar {
-    width: 220px;
-    min-width: 220px;
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 220px;
+      min-width: 220px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-  .sidebar-section {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-  }
+    .sidebar-section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
 
-  .label {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
+    .label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
 
-  #logo-title  { font-size: 11px; letter-spacing: 4px; color: var(--green); font-weight: 600; margin-bottom: 2px; }
-  #logo-sub    { font-size: 9px; color: var(--muted); letter-spacing: 1px; }
+    #logo-title {
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--green);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
 
-  /* status dot */
-  #status-row  { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; }
-  #status-dot  { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--muted); }
-  #status-dot.live     { background: var(--green); box-shadow: 0 0 5px var(--green); }
-  #status-dot.syncing  { background: var(--yellow); }
-  #status-dot.error    { background: var(--red); }
-  #status-text { font-size: 10px; }
+    #logo-sub {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
 
-  /* stats grid */
-  #stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 0; font-size: 9px; color: var(--muted); }
-  #stats-grid span { color: var(--green); }
-  #stats-grid .blue  { color: var(--blue); }
-  #stats-grid .purp  { color: var(--purple); }
-  #stats-grid .orng  { color: var(--orange); }
+    /* status dot */
+    #status-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
 
-  /* ws log */
-  #ws-log { font-size: 8px; color: var(--border2); line-height: 1.5; }
-  #ws-log .log-line { word-break: break-all; margin-bottom: 2px; }
-  #ws-log .log-line.latest { color: var(--blue); }
+    #status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--muted);
+    }
 
-  /* online users */
-  #online-list { flex: 1; overflow-y: auto; padding: 12px 16px; }
-  #online-list::-webkit-scrollbar { width: 3px; }
-  #online-list::-webkit-scrollbar-thumb { background: var(--border2); }
+    #status-dot.live {
+      background: var(--green);
+      box-shadow: 0 0 5px var(--green);
+    }
 
-  .user-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
-  .user-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .user-name { font-size: 10px; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .user-name.you { font-weight: 600; }
+    #status-dot.syncing {
+      background: var(--yellow);
+    }
 
-  #you-section { padding: 12px 16px; border-top: 1px solid var(--border); }
-  #you-name { font-size: 10px; font-weight: 600; margin-top: 5px; }
-  #you-id   { font-size: 8px; color: var(--border2); margin-top: 3px; }
+    #status-dot.error {
+      background: var(--red);
+    }
 
-  /* ── Main chat ── */
-  #main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    #status-text {
+      font-size: 10px;
+    }
 
-  #header {
-    padding: 13px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg2);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-  }
-  #header-left { display: flex; align-items: center; gap: 10px; }
-  #channel { color: var(--blue); font-size: 13px; font-weight: 600; }
-  .badge {
-    font-size: 8px; color: var(--border2); padding: 2px 7px;
-    border: 1px solid var(--border2); border-radius: 4px; letter-spacing: 1px;
-  }
-  #online-count { font-size: 9px; color: var(--muted); }
+    /* stats grid */
+    #stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px 0;
+      font-size: 9px;
+      color: var(--muted);
+    }
 
-  /* messages */
-  #messages {
-    flex: 1; overflow-y: auto;
-    padding: 16px 20px;
-    display: flex;
-    flex-direction: column;
-    scroll-behavior: smooth;
-  }
-  #messages::-webkit-scrollbar { width: 4px; }
-  #messages::-webkit-scrollbar-thumb { background: var(--border2); }
+    #stats-grid span {
+      color: var(--green);
+    }
 
-  .date-divider {
-    display: flex; align-items: center; gap: 10px;
-    margin: 14px 0 10px;
-  }
-  .date-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
-  .date-divider span { font-size: 8px; color: var(--muted); letter-spacing: 1px; }
+    #stats-grid .blue {
+      color: var(--blue);
+    }
 
-  .msg-row {
-    display: flex; gap: 10px;
-    padding: 3px 6px; border-radius: 4px;
-    border-left: 2px solid transparent;
-    margin-bottom: 1px;
-  }
-  .msg-row.mine { background: rgba(35,134,54,0.05); }
+    #stats-grid .purp {
+      color: var(--purple);
+    }
 
-  .msg-time  { font-size: 9px; color: var(--muted); padding-top: 2px; min-width: 60px; text-align: right; flex-shrink: 0; }
-  .msg-user  { font-size: 10px; font-weight: 600; min-width: 120px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .msg-text  { font-size: 12px; color: var(--sub); line-height: 1.6; word-break: break-word; flex: 1; }
-  .msg-row.mine .msg-text { color: var(--text); }
+    #stats-grid .orng {
+      color: var(--orange);
+    }
 
-  .system-msg {
-    font-size: 9px; color: var(--muted);
-    padding: 4px 6px; margin-bottom: 2px;
-    font-style: italic;
-  }
+    /* ws log */
+    #ws-log {
+      font-size: 8px;
+      color: var(--border2);
+      line-height: 1.5;
+    }
 
-  #empty-state {
-    color: var(--border2); font-size: 11px;
-    text-align: center; margin-top: 80px;
-    line-height: 1.8;
-  }
+    #ws-log .log-line {
+      word-break: break-all;
+      margin-bottom: 2px;
+    }
 
-  /* input */
-  #input-area {
-    padding: 12px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--bg2);
-    flex-shrink: 0;
-  }
-  #input-box {
-    display: flex; gap: 8px; align-items: center;
-    background: var(--border); border: 1px solid var(--border2);
-    border-radius: 6px; padding: 8px 12px;
-  }
-  #input-prefix { font-size: 10px; font-weight: 600; flex-shrink: 0; }
-  #input-field {
-    flex: 1; background: transparent; border: none; outline: none;
-    color: var(--text); font-size: 12px; font-family: var(--font);
-  }
-  #input-field::placeholder { color: var(--border2); }
-  #send-btn {
-    background: var(--green-bg); border: none; border-radius: 4px;
-    padding: 4px 14px; color: #fff; font-size: 10px;
-    font-family: var(--font); font-weight: 600; cursor: pointer;
-    letter-spacing: 1px; flex-shrink: 0;
-  }
-  #send-btn:hover { background: #2ea043; }
-  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #ws-log .log-line.latest {
+      color: var(--blue);
+    }
 
-  #input-footer {
-    font-size: 8px; color: var(--border2);
-    margin-top: 5px; padding-left: 2px; letter-spacing: 0.5px;
-  }
-</style>
+    /* online users */
+    #online-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+    }
+
+    #online-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    #online-list::-webkit-scrollbar-thumb {
+      background: var(--border2);
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .user-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .user-name {
+      font-size: 10px;
+      color: var(--sub);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-name.you {
+      font-weight: 600;
+    }
+
+    #you-section {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    #you-name {
+      font-size: 10px;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    /* ── Main chat ── */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    #header {
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    #header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #channel {
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    #online-count {
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    /* messages */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+    }
+
+    #messages::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #messages::-webkit-scrollbar-thumb {
+      background: var(--border2);
+    }
+
+    .date-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0 10px;
+    }
+
+    .date-divider hr {
+      flex: 1;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .date-divider span {
+      font-size: 8px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .msg-row {
+      display: flex;
+      gap: 10px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      border-left: 2px solid transparent;
+      margin-bottom: 1px;
+    }
+
+    .msg-row.mine {
+      background: rgba(35, 134, 54, 0.05);
+    }
+
+    .msg-time {
+      font-size: 9px;
+      color: var(--muted);
+      padding-top: 2px;
+      min-width: 60px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .msg-user {
+      font-size: 10px;
+      font-weight: 600;
+      min-width: 120px;
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .msg-text {
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.6;
+      word-break: break-word;
+      flex: 1;
+    }
+
+    .msg-row.mine .msg-text {
+      color: var(--text);
+    }
+
+    .system-msg {
+      font-size: 9px;
+      color: var(--muted);
+      padding: 4px 6px;
+      margin-bottom: 2px;
+      font-style: italic;
+    }
+
+    #empty-state {
+      color: var(--border2);
+      font-size: 11px;
+      text-align: center;
+      margin-top: 80px;
+      line-height: 1.8;
+    }
+
+    /* input */
+    #input-area {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+      flex-shrink: 0;
+    }
+
+    #input-box {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--border);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 8px 12px;
+    }
+
+    #input-prefix {
+      font-size: 10px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    #input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 12px;
+      font-family: var(--font);
+    }
+
+    #input-field::placeholder {
+      color: var(--border2);
+    }
+
+    #send-btn {
+      background: var(--green-bg);
+      border: none;
+      border-radius: 4px;
+      padding: 4px 14px;
+      color: #fff;
+      font-size: 10px;
+      font-family: var(--font);
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+
+    #send-btn:hover {
+      background: #2ea043;
+    }
+
+    #send-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- ── Sidebar ── -->
-<aside id="sidebar">
-  <div class="sidebar-section">
-    <div id="logo-title">NEXUS</div>
-    <div id="logo-sub">REAL-TIME CHAT SYSTEM</div>
-  </div>
-
-  <div class="sidebar-section">
-    <div class="label">SYSTEM STATUS</div>
-    <div id="status-row">
-      <div id="status-dot"></div>
-      <span id="status-text" style="font-size:10px; color:var(--sub)">connecting...</span>
+  <!-- ── Sidebar ── -->
+  <aside id="sidebar">
+    <div class="sidebar-section">
+      <div id="logo-title">NEXUS</div>
+      <div id="logo-sub">REAL-TIME CHAT SYSTEM</div>
     </div>
-    <div id="stats-grid">
-      <div>events <span id="st-events">0</span></div>
-      <div>latency <span class="blue" id="st-lat">—</span></div>
-      <div>messages <span class="purp" id="st-msgs">0</span></div>
-      <div>conc-ops <span class="orng" id="st-conc">0</span></div>
+
+    <div class="sidebar-section">
+      <div class="label">SYSTEM STATUS</div>
+      <div id="status-row">
+        <div id="status-dot"></div>
+        <span id="status-text" style="font-size:10px; color:var(--sub)">connecting...</span>
+      </div>
+      <div id="stats-grid">
+        <div>messages <span class="purp" id="st-msgs">0</span></div>
+        <div>latency <span class="blue" id="st-lat">—</span></div>
+      </div>
     </div>
-  </div>
 
-  <div class="sidebar-section">
-    <div class="label">WS EVENT LOG</div>
-    <div id="ws-log"><div style="color:var(--border2); font-size:9px">waiting...</div></div>
-  </div>
-
-  <div id="online-list">
-    <div class="label">ONLINE — <span id="online-count-sidebar">0</span></div>
-    <div id="user-list-inner"></div>
-  </div>
-
-  <div id="you-section">
-    <div class="label">YOU</div>
-    <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-      <div class="user-dot" id="you-dot"></div>
-      <div id="you-name"></div>
+    <div class="sidebar-section">
+      <div class="label">WS EVENT LOG</div>
+      <div id="ws-log">
+        <div style="color:var(--border2); font-size:9px">waiting...</div>
+      </div>
     </div>
-    <div id="you-id"></div>
-  </div>
-</aside>
 
-<!-- ── Main ── -->
-<div id="main">
-  <div id="header">
-    <div id="header-left">
-      <span id="channel"># general</span>
-      <span class="badge">WEBSOCKET · ASYNC · SUPABASE</span>
+    <div id="online-list">
+      <div class="label">ONLINE — <span id="online-count-sidebar">0</span></div>
+      <div id="user-list-inner"></div>
     </div>
-    <span id="online-count" style="font-size:9px; color:var(--muted)">0 online</span>
-  </div>
 
-  <div id="messages">
-    <div id="empty-state">
-      no messages yet<br>
-      open in another tab to test multi-user real-time chat
+    <div id="you-section">
+      <div class="label">YOU</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <div class="user-dot" id="you-dot"></div>
+        <div id="you-name"></div>
+      </div>
     </div>
-  </div>
+  </aside>
 
-  <div id="input-area">
-    <div id="input-box">
-      <span id="input-prefix" style="color:var(--sub)">› </span>
-      <input id="input-field" type="text" placeholder="type a message and press Enter..." autocomplete="off" />
-      <button id="send-btn" disabled>SEND</button>
+  <!-- ── Main ── -->
+  <div id="main">
+    <div id="header">
+      <div id="header-left">
+        <span id="channel"># general</span>
+      </div>
+      <span id="online-count" style="font-size:9px; color:var(--muted)">0 online</span>
     </div>
-    <div id="input-footer">
-      WebSocket full-duplex · asyncio.gather() parallel ops · background worker · Supabase PostgreSQL
+
+    <div id="messages">
+      <div id="empty-state">
+        no messages yet<br>
+        open in another tab to test multi-user real-time chat
+      </div>
+    </div>
+
+    <div id="input-area">
+      <div id="input-box">
+        <span id="input-prefix" style="color:var(--sub)">› </span>
+        <input id="input-field" type="text" placeholder="type a message and press Enter..." autocomplete="off" />
+        <button id="send-btn" disabled>SEND</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-// ── Identity ────────────────────────────────────────
-const COLORS = ["#4ade80","#60a5fa","#f472b6","#fb923c","#a78bfa","#34d399","#fbbf24","#38bdf8","#e879f9","#f87171"];
-const ADJ  = ["Async","Parallel","Concurrent","Distributed","Remote","Active","Live","Reactive","Shared","Atomic"];
-const NOUN = ["Thread","Worker","Socket","Node","Stream","Packet","Signal","Queue","Buffer","Process"];
+  <script>
+    // ── Identity ────────────────────────────────────────
+    const COLORS = ["#4ade80", "#60a5fa", "#f472b6", "#fb923c", "#a78bfa", "#34d399", "#fbbf24", "#38bdf8", "#e879f9", "#f87171"];
+    const ADJ = ["Async", "Parallel", "Concurrent", "Distributed", "Remote", "Active", "Live", "Reactive", "Shared", "Atomic"];
+    const NOUN = ["Thread", "Worker", "Socket", "Node", "Stream", "Packet", "Signal", "Queue", "Buffer", "Process"];
 
-const ME = {
-  id:    "u_" + Date.now().toString(36) + Math.random().toString(36).slice(2,5),
-  name:  ADJ[Math.floor(Math.random()*10)] + NOUN[Math.floor(Math.random()*10)],
-  color: COLORS[Math.floor(Math.random()*10)],
-};
+    const ME = {
+      id: "u_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+      name: ADJ[Math.floor(Math.random() * 10)] + NOUN[Math.floor(Math.random() * 10)],
+      color: COLORS[Math.floor(Math.random() * 10)],
+    };
 
-// ── DOM refs ────────────────────────────────────────
-const $msgs      = document.getElementById("messages");
-const $input     = document.getElementById("input-field");
-const $sendBtn   = document.getElementById("send-btn");
-const $statusDot = document.getElementById("status-dot");
-const $statusTxt = document.getElementById("status-text");
-const $wsLog     = document.getElementById("ws-log");
-const $userList  = document.getElementById("user-list-inner");
-const $onlineSB  = document.getElementById("online-count-sidebar");
-const $onlineHD  = document.getElementById("online-count");
+    // ── DOM refs ────────────────────────────────────────
+    const $msgs = document.getElementById("messages");
+    const $input = document.getElementById("input-field");
+    const $sendBtn = document.getElementById("send-btn");
+    const $statusDot = document.getElementById("status-dot");
+    const $statusTxt = document.getElementById("status-text");
+    const $wsLog = document.getElementById("ws-log");
+    const $userList = document.getElementById("user-list-inner");
+    const $onlineSB = document.getElementById("online-count-sidebar");
+    const $onlineHD = document.getElementById("online-count");
 
-// stats
-const $stEvents = document.getElementById("st-events");
-const $stLat    = document.getElementById("st-lat");
-const $stMsgs   = document.getElementById("st-msgs");
-const $stConc   = document.getElementById("st-conc");
+    // stats
+    const $stLat = document.getElementById("st-lat");
+    const $stMsgs = document.getElementById("st-msgs");
 
-// ── State ───────────────────────────────────────────
-let ws           = null;
-let eventCount   = 0;
-let msgCount     = 0;
-let lastDate     = null;
-let reconnectMs  = 1000;
+    // ── State ───────────────────────────────────────────
+    let ws = null;
+    let eventCount = 0;
+    let msgCount = 0;
+    let lastDate = null;
+    let reconnectMs = 1000;
 
-// ── You section ─────────────────────────────────────
-document.getElementById("you-name").textContent = ME.name;
-document.getElementById("you-name").style.color = ME.color;
-document.getElementById("you-dot").style.background = ME.color;
-document.getElementById("you-dot").style.boxShadow = `0 0 5px ${ME.color}`;
-document.getElementById("you-id").textContent = "id: " + ME.id;
-document.getElementById("input-prefix").style.color = ME.color;
-document.getElementById("input-prefix").textContent = ME.name + " ›";
+    // ── You section ─────────────────────────────────────
+    document.getElementById("you-name").textContent = ME.name;
+    document.getElementById("you-name").style.color = ME.color;
+    document.getElementById("you-dot").style.background = ME.color;
+    document.getElementById("you-dot").style.boxShadow = `0 0 5px ${ME.color}`;
+    document.getElementById("input-prefix").style.color = ME.color;
+    document.getElementById("input-prefix").textContent = ME.name + " ›";
 
-// ── WS Log ──────────────────────────────────────────
-const logLines = [];
-function addLog(msg) {
-  logLines.push(msg);
-  if (logLines.length > 6) logLines.shift();
-  $wsLog.innerHTML = logLines.map((l, i) =>
-    `<div class="log-line${i===logLines.length-1?" latest":""}">${l}</div>`
-  ).join("");
-}
+    // ── WS Log ──────────────────────────────────────────
+    const logLines = [];
+    function addLog(msg) {
+      logLines.push(msg);
+      if (logLines.length > 6) logLines.shift();
+      $wsLog.innerHTML = logLines.map((l, i) =>
+        `<div class="log-line${i === logLines.length - 1 ? " latest" : ""}">${l}</div>`
+      ).join("");
+    }
 
-// ── Format helpers ──────────────────────────────────
-function fmtTime(ts) {
-  return new Date(ts).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"});
-}
-function fmtDate(ts) {
-  return new Date(ts).toLocaleDateString([], {weekday:"short", month:"short", day:"numeric"});
-}
+    // ── Format helpers ──────────────────────────────────
+    function fmtTime(ts) {
+      return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
+    function fmtDate(ts) {
+      return new Date(ts).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+    }
 
-// ── Messages ────────────────────────────────────────
-function appendMessage(msg, scroll=true) {
-  const d = fmtDate(msg.ts);
-  if (d !== lastDate) {
-    lastDate = d;
-    const div = document.createElement("div");
-    div.className = "date-divider";
-    div.innerHTML = `<hr><span>${d}</span><hr>`;
-    $msgs.appendChild(div);
-  }
+    // ── Messages ────────────────────────────────────────
+    function appendMessage(msg, scroll = true) {
+      const d = fmtDate(msg.ts);
+      if (d !== lastDate) {
+        lastDate = d;
+        const div = document.createElement("div");
+        div.className = "date-divider";
+        div.innerHTML = `<hr><span>${d}</span><hr>`;
+        $msgs.appendChild(div);
+      }
 
-  const empty = document.getElementById("empty-state");
-  if (empty) empty.remove();
+      const empty = document.getElementById("empty-state");
+      if (empty) empty.remove();
 
-  const isMe = msg.uid === ME.id;
-  const row = document.createElement("div");
-  row.className = "msg-row" + (isMe ? " mine" : "");
-  if (isMe) row.style.borderLeftColor = ME.color + "44";
-  row.innerHTML = `
+      const isMe = msg.uid === ME.id;
+      const row = document.createElement("div");
+      row.className = "msg-row" + (isMe ? " mine" : "");
+      if (isMe) row.style.borderLeftColor = ME.color + "44";
+      row.innerHTML = `
     <span class="msg-time">${fmtTime(msg.ts)}</span>
     <span class="msg-user" style="color:${msg.color}">${escHtml(msg.name)}</span>
     <span class="msg-text">${escHtml(msg.text)}</span>
   `;
-  $msgs.appendChild(row);
-  msgCount++;
-  $stMsgs.textContent = msgCount;
+      $msgs.appendChild(row);
+      msgCount++;
+      $stMsgs.textContent = msgCount;
 
-  if (scroll) $msgs.scrollTop = $msgs.scrollHeight;
-}
+      if (scroll) $msgs.scrollTop = $msgs.scrollHeight;
+    }
 
-function appendSystem(text) {
-  const div = document.createElement("div");
-  div.className = "system-msg";
-  div.textContent = "· " + text;
-  $msgs.appendChild(div);
-  $msgs.scrollTop = $msgs.scrollHeight;
-}
+    function appendSystem(text) {
+      const div = document.createElement("div");
+      div.className = "system-msg";
+      div.textContent = "· " + text;
+      $msgs.appendChild(div);
+      $msgs.scrollTop = $msgs.scrollHeight;
+    }
 
-function renderUsers(users) {
-  $userList.innerHTML = "";
-  $onlineSB.textContent = users.length;
-  $onlineHD.textContent = users.length + " online";
-  users.forEach(u => {
-    const row = document.createElement("div");
-    row.className = "user-row";
-    const isMe = u.id === ME.id;
-    row.innerHTML = `
+    function renderUsers(users) {
+      $userList.innerHTML = "";
+      $onlineSB.textContent = users.length;
+      $onlineHD.textContent = users.length + " online";
+      users.forEach(u => {
+        const row = document.createElement("div");
+        row.className = "user-row";
+        const isMe = u.id === ME.id;
+        row.innerHTML = `
       <div class="user-dot" style="background:${u.color}; box-shadow:0 0 4px ${u.color}"></div>
-      <span class="user-name${isMe?" you":""}" style="${isMe?"color:"+u.color:""}">${escHtml(u.name)}${isMe?" (you)":""}</span>
+      <span class="user-name${isMe ? " you" : ""}" style="${isMe ? "color:" + u.color : ""}">${escHtml(u.name)}${isMe ? " (you)" : ""}</span>
     `;
-    $userList.appendChild(row);
-  });
-}
+        $userList.appendChild(row);
+      });
+    }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
+    function escHtml(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
 
-// ── WebSocket ────────────────────────────────────────
-function connect() {
-  const proto = location.protocol === "https:" ? "wss:" : "ws:";
-  const url   = `${proto}//${location.host}/ws/${ME.id}`;
-  addLog(`→ connect ${url}`);
+    // ── WebSocket ────────────────────────────────────────
+    function connect() {
+      const proto = location.protocol === "https:" ? "wss:" : "ws:";
+      const url = `${proto}//${location.host}/ws/${ME.id}`;
+      addLog(`→ connect ${url}`);
 
-  ws = new WebSocket(url);
+      ws = new WebSocket(url);
 
-  ws.onopen = () => {
-    reconnectMs = 1000;
-    setStatus("live", "connected");
-    $sendBtn.disabled = false;
-    addLog("✓ WebSocket open");
-    send({ event: "join", user: ME });
-    addLog("→ join {user}");
-    startHeartbeat();
-  };
+      ws.onopen = () => {
+        reconnectMs = 1000;
+        setStatus("live", "connected");
+        $sendBtn.disabled = false;
+        addLog("✓ WebSocket open");
+        send({ event: "join", user: ME });
+        addLog("→ join {user}");
+        startHeartbeat();
+      };
 
-  ws.onclose = () => {
-    setStatus("error", "disconnected — reconnecting...");
-    $sendBtn.disabled = true;
-    addLog(`✗ closed — retry in ${reconnectMs}ms`);
-    setTimeout(connect, reconnectMs);
-    reconnectMs = Math.min(reconnectMs * 2, 30000);
-  };
+      ws.onclose = () => {
+        setStatus("error", "disconnected — reconnecting...");
+        $sendBtn.disabled = true;
+        addLog(`✗ closed — retry in ${reconnectMs}ms`);
+        setTimeout(connect, reconnectMs);
+        reconnectMs = Math.min(reconnectMs * 2, 30000);
+      };
 
-  ws.onerror = () => {
-    setStatus("error", "connection error");
-    addLog("✗ ws error");
-  };
+      ws.onerror = () => {
+        setStatus("error", "connection error");
+        addLog("✗ ws error");
+      };
 
-  ws.onmessage = (e) => {
-    const t0 = Date.now();
-    const data = JSON.parse(e.data);
-    const latency = Date.now() - t0;
-    eventCount++;
-    $stEvents.textContent = eventCount;
-    $stLat.textContent = latency + "ms";
+      ws.onmessage = (e) => {
+        const t0 = Date.now();
+        const data = JSON.parse(e.data);
+        const latency = Date.now() - t0;
+        eventCount++;
+        $stLat.textContent = latency + "ms";
 
-    addLog(`← ${data.event}`);
+        addLog(`← ${data.event}`);
 
-    switch (data.event) {
-      case "init":
-        lastDate = null;
-        $msgs.innerHTML = "";
-        msgCount = 0;
-        $stMsgs.textContent = 0;
-        if (data.messages.length === 0) {
-          $msgs.innerHTML = '<div id="empty-state">no messages yet<br>open in another tab to test multi-user real-time chat</div>';
-        } else {
-          data.messages.forEach(m => appendMessage(m, false));
-          $msgs.scrollTop = $msgs.scrollHeight;
+        switch (data.event) {
+          case "init":
+            lastDate = null;
+            $msgs.innerHTML = "";
+            msgCount = 0;
+            $stMsgs.textContent = 0;
+            if (data.messages.length === 0) {
+              $msgs.innerHTML = '<div id="empty-state">no messages yet<br>open in another tab to test multi-user real-time chat</div>';
+            } else {
+              data.messages.forEach(m => appendMessage(m, false));
+              $msgs.scrollTop = $msgs.scrollHeight;
+            }
+            renderUsers(data.users || []);
+            $stConc.textContent = (data.users?.length || 0) + 2;
+            appendSystem("connected as " + ME.name);
+            break;
+
+          case "message":
+            appendMessage(data.message);
+            break;
+
+          case "user_joined":
+            renderUsers(data.users || []);
+            appendSystem(data.user.name + " joined");
+            $stConc.textContent = (data.users?.length || 0) + 2;
+            break;
+
+          case "user_left":
+            renderUsers(data.users || []);
+            appendSystem("a user left");
+            break;
+
+          case "presence_update":
+            renderUsers(data.users || []);
+            $stConc.textContent = (data.users?.length || 0) + 2;
+            break;
         }
-        renderUsers(data.users || []);
-        $stConc.textContent = (data.users?.length || 0) + 2;
-        appendSystem("connected as " + ME.name);
-        break;
-
-      case "message":
-        appendMessage(data.message);
-        break;
-
-      case "user_joined":
-        renderUsers(data.users || []);
-        appendSystem(data.user.name + " joined");
-        $stConc.textContent = (data.users?.length || 0) + 2;
-        break;
-
-      case "user_left":
-        renderUsers(data.users || []);
-        appendSystem("a user left");
-        break;
-
-      case "presence_update":
-        renderUsers(data.users || []);
-        $stConc.textContent = (data.users?.length || 0) + 2;
-        break;
+      };
     }
-  };
-}
 
-// ── Heartbeat (background worker simulation) ─────────
-let heartbeatTimer = null;
-function startHeartbeat() {
-  clearInterval(heartbeatTimer);
-  heartbeatTimer = setInterval(() => {
-    if (ws?.readyState === WebSocket.OPEN) {
-      send({ event: "heartbeat", user: ME });
-      addLog("→ heartbeat");
+    // ── Heartbeat (background worker simulation) ─────────
+    let heartbeatTimer = null;
+    function startHeartbeat() {
+      clearInterval(heartbeatTimer);
+      heartbeatTimer = setInterval(() => {
+        if (ws?.readyState === WebSocket.OPEN) {
+          send({ event: "heartbeat", user: ME });
+          addLog("→ heartbeat");
+        }
+      }, 5000);
     }
-  }, 5000);
-}
 
-// ── Send helpers ─────────────────────────────────────
-function send(payload) {
-  if (ws?.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify(payload));
-  }
-}
+    // ── Send helpers ─────────────────────────────────────
+    function send(payload) {
+      if (ws?.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(payload));
+      }
+    }
 
-function sendMessage() {
-  const text = $input.value.trim();
-  if (!text || ws?.readyState !== WebSocket.OPEN) return;
-  $input.value = "";
+    function sendMessage() {
+      const text = $input.value.trim();
+      if (!text || ws?.readyState !== WebSocket.OPEN) return;
+      $input.value = "";
 
-  const msg = {
-    id:    Date.now() + "_" + Math.random().toString(36).slice(2,5),
-    uid:   ME.id,
-    name:  ME.name,
-    color: ME.color,
-    text,
-    ts:    Date.now(),
-  };
+      const msg = {
+        id: Date.now() + "_" + Math.random().toString(36).slice(2, 5),
+        uid: ME.id,
+        name: ME.name,
+        color: ME.color,
+        text,
+        ts: Date.now(),
+      };
 
-  addLog(`→ message "${text.slice(0,20)}..."`);
-  send({ event: "message", message: msg });
-}
+      addLog(`→ message "${text.slice(0, 20)}..."`);
+      send({ event: "message", message: msg });
+    }
 
-$input.addEventListener("keydown", e => {
-  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-});
-$sendBtn.addEventListener("click", sendMessage);
+    $input.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    $sendBtn.addEventListener("click", sendMessage);
 
-// ── Status ───────────────────────────────────────────
-function setStatus(cls, text) {
-  $statusDot.className = cls;
-  $statusTxt.textContent = text;
-  $statusTxt.style.color = cls === "live" ? "var(--green)" : cls === "syncing" ? "var(--yellow)" : "var(--red)";
-}
+    // ── Status ───────────────────────────────────────────
+    function setStatus(cls, text) {
+      $statusDot.className = cls;
+      $statusTxt.textContent = text;
+      $statusTxt.style.color = cls === "live" ? "var(--green)" : cls === "syncing" ? "var(--yellow)" : "var(--red)";
+    }
 
-// ── Boot ─────────────────────────────────────────────
-connect();
-</script>
+    // ── Boot ─────────────────────────────────────────────
+    connect();
+  </script>
 </body>
+
 </html>
